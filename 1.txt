@@ -1,1 +1,1 @@
-test
+adodb_logsqlcreateddatetimeNO
