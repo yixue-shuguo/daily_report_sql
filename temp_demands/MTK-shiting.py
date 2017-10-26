@@ -10,11 +10,8 @@ sys.path.append('../')
 
 import pymysql 
 import pandas as pd 
-from common_packet.get_date import getday
-
-yesterday = getday(1)
-
-
+from common_packet import get_date,send_mail
+yesterday =get_date.getday(1)
 
 conn = pymysql.connect(host = 'rr-uf647q511648367cso.mysql.rds.aliyuncs.com', 
                        user = 'crm_root' ,
@@ -35,7 +32,7 @@ t.teachername 教师,
 u.last_name 负责人,
 u2.last_name 创建人,
 s.subject3991 科目,
-cl.sourcesdetail 招生线索 ,
+s.leadsource 招生线索 ,
 s_c.c as 试听次数 ,
 #s.shiting3071 试听考勤,
 #s.clueregsid 数据ID,
@@ -94,5 +91,21 @@ order by s.shiting3061 , s.shiting3071 , s.clueregsid ,c.createdtime
 
 
 '''
-
-d1 = pd.read_sql(sql ,conn)
+try:
+    d1 = pd.read_sql(sql ,conn)
+    file = '昨日试听情况%s.xlsx'%(yesterday)
+    writer = pd.ExcelWriter(file)
+    d1.to_excel(writer ,'Sheet1',index = False)
+    writer.save()
+    to_list = ['langzhiyi@171xue.com']
+#    to_list = ['mashuguo@171xue.com']
+    cc_list = ['mashuguo@171xue.com','guojinyuan@171xue.com']
+    sub = '昨天%s试听回访情况，此为自动发送，请知悉。'%(yesterday)
+    send_mail.send_mail(to_list ,cc_list  ,sub,file)   
+    print ('%s 昨天试听发送成功'%(yesterday))
+except Exception as e :
+    to_list = ["mashuguo@171xue.com"]
+    cc = None
+    sub = '今天数据提取发生错误'
+    file = None
+    print ('%s 昨天试听发送失败')%(yesterday)

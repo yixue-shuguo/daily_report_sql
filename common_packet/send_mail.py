@@ -17,7 +17,7 @@ mail_user="mashuguo@171xue.com"    #用户名
 mail_pass="Ma1987"   #密码  
 
   
-def send_mail(to_list ,cc_list ,sub,file):  
+def send_mail(to_list ,cc_list  ,sub,file  ):  
     #to_list：收件人；sub：主题；content：邮件内容  
     me= mail_user  #显示发件人信息 
     msg = MIMEMultipart()  #创建一个带附件的实例  
@@ -25,11 +25,16 @@ def send_mail(to_list ,cc_list ,sub,file):
     msg['Subject'] = sub    #设置主题  
     msg['From'] = me  
     msg['To'] = ";".join(to_list)  
-    msg['Cc'] = ";".join(cc_list)  
-  
-    att1 = MIMEText(open(file,'rb').read(),'base64','gb2312')  
-    att1.add_header('Content-Disposition','attachment', filename = file)  
-    msg.attach(att1)  
+    if cc_list is not None:
+        msg['Cc'] = ";".join(cc_list)  
+    else :
+        pass 
+    if file is not None:
+        att1 = MIMEText(open(file,'rb').read(),'base64','gb2312')  
+        att1.add_header('Content-Disposition','attachment', filename = file)  
+        msg.attach(att1)  
+    else  :
+        pass
   
     try:  
         s = smtplib.SMTP()  
@@ -44,7 +49,7 @@ def send_mail(to_list ,cc_list ,sub,file):
 
 
 if __name__ == '__main__':  
-    mailto_list=["langzhiyi@171xue.com"]  #发送给谁
+    mailto_list=["mashuguo@171xue.com"]  #发送给谁
     cc_list = ["mashuguo@171xue.com"]
     if send_mail(mailto_list,cc_list ,"这是一个测试邮件","test.xlsx"):  
         print ("发送成功")
