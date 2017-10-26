@@ -16,6 +16,7 @@ host = 'rr-uf647q511648367cso.mysql.rds.aliyuncs.com'
 user = 'crm_root'
 password = 'Hello2017'
 database = 'ecustomer'
-conn = mysql(host,user,password ,database)
+charset='utf-8'
+conn = mysql(host,user,password ,database,charset)
 
 d1 = pd.read_sql(sql1,conn)
