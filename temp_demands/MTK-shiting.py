@@ -5,8 +5,16 @@ Created on Wed Oct 25 19:36:08 2017
 @author: Administrator
 """
 #此处是将 common_packet 加入可引用的目录
+#import os
+#dirs = os.path.join( os.path.dirname(__file__),'../')  #上上级文件目录名
+#os.sys.path.append(os.path.join( os.path.dirname(__file__), '../'))   #将上上级目录加载到python的环境变量中。
+#
+#
 import sys
 sys.path.append('../')
+
+
+
 
 import pymysql 
 import pandas as pd 
@@ -85,7 +93,7 @@ select clueregsid,count(*) c
 from ec_shitings
 group by clueregsid
 )s_c  on s.clueregsid = s_c.clueregsid
-where DATE_FORMAT(s.shiting3061,'%Y%m%d') =DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 day),'%Y%m%d')
+where DATE_FORMAT(s.shiting3061,'%Y%m%d') =DATE_FORMAT(DATE_SUB(now(),INTERVAL 1 day),'%Y%m%d')
 and shiting3071 ='到'
 order by s.shiting3061 , s.shiting3071 , s.clueregsid ,c.createdtime 
 
