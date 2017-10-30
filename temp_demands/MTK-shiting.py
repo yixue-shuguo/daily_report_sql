@@ -50,7 +50,7 @@ s_c.c as 试听次数 ,
 #s.clueregsid 数据ID,
 #d.createdtime 课前拜访时间,
 #d.comments 课前拜访记录,
-#c.createdtime 课后回访时间,
+c.createdtime 课后回访时间,
 REPLACE(REPLACE(c.comments, CHAR(10), ''), CHAR(13), '')  课后回访记录
 
 
