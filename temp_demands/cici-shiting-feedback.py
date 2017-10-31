@@ -91,7 +91,7 @@ left join ec_clueregs cl
 on s.clueregsid = cl.clueregsid 
 left join ec_users u 
 on s.smownerid = u.id
-where DATE_FORMAT(s.shiting3061,'%Y%m%d') between DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 4 DAY),'%Y%m%d')and DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 2 DAY),'%Y%m%d')
+where DATE_FORMAT(s.shiting3061,'%Y%m%d') between DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 4 DAY),'%Y%m%d')and DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 DAY),'%Y%m%d')
 order by s.shiting3061 , s.shiting3071 , s.clueregsid ,c.createdtime 
 
 '''
