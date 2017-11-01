@@ -36,6 +36,7 @@ select
 s.shitingsid 试听ID,
 s.shitingname 主题,
 cl.clueregname 学员姓名,
+s.cf_4030 热度,
 REPLACE(REPLACE(s.cf_3815, CHAR(10), ''), CHAR(13), '') 意向程度,
 s.description 备注,
 ac.acctolistname 1对1课程,
