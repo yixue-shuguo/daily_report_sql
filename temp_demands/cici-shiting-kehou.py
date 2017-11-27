@@ -112,10 +112,10 @@ try:
     writer = pd.ExcelWriter(file)
     d1.to_excel(writer ,'Sheet1',index = False)
     writer.save()
-#    to_list = ['ouyangruili@171xue.com']
-    to_list = ['mashuguo@171xue.com']
-#    cc_list = ['cici.cai@171xue.com','mashuguo@171xue.com','guojinyuan@171xue.com']
-    cc_list = ['mashuguo@171xue.com']
+    to_list = ['ouyangruili@171xue.com']
+#    to_list = ['mashuguo@171xue.com']
+    cc_list = ['cici.cai@171xue.com','mashuguo@171xue.com','guojinyuan@171xue.com']
+#    cc_list = ['mashuguo@171xue.com']
     sub = '今天%s试听课前具体信息，此为自动发送，请知悉。'%(today)
     send_mail.send_mail(to_list ,cc_list  ,sub,file)   
     print ('%s 今天试听发反馈送成功'%(today))

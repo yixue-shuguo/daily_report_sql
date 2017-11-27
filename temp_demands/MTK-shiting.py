@@ -109,7 +109,7 @@ try:
     writer.save()
     to_list = ['langzhiyi@171xue.com','guoyaqiong@171xue.com']
 #    to_list = ['mashuguo@171xue.com']
-    cc_list = ['mashuguo@171xue.com','guojinyuan@171xue.com']
+    cc_list = ['kiki.wang@171xue.com','mashuguo@171xue.com','guojinyuan@171xue.com']
     sub = '昨天%s试听回访情况，此为自动发送，请知悉。'%(yesterday)
     send_mail.send_mail(to_list ,cc_list  ,sub,file)   
     print ('%s 昨天试听发送成功'%(yesterday))
