@@ -37,75 +37,86 @@ conn = pymysql.connect(host = 'rr-uf647q511648367cso.mysql.rds.aliyuncs.com',
 print('%s 数据库成功连接'%(today))
 
 sql = '''
-
 select 
 s.shitingsid 试听ID,
-s.shitingname 试听编码,
+s.shitingname 主题,
 cl.clueregname 学员姓名,
-u.last_name 负责人,
 s.cf_4030 热度,
+REPLACE(REPLACE(s.cf_3815, CHAR(10), ''), CHAR(13), '') 意向程度,
+s.description 备注,
+ac.acctolistname 1对1课程,
+s.shiting3061 试听日期,
+s.shiting3063 试听时间,
+t.teachername 教师, 
+u.last_name 负责人,
+u2.last_name 创建人,
+s.subject3991 科目,
+s.leadsource 招生线索 ,
+s_c.c as 试听次数 ,
 s.shiting3071 试听考勤,
-concat(s.shiting3061 ,' ', right(s.shiting3063,5),':00') 试听日期,
 s.clueregsid 数据ID,
-d.createdtime 课前最早拜访时间,
-d.comments 课前最早拜访记录,
-d.createmax 课前最晚拜访时间,
-d.before_c 课前拜访次数,
-c.createdtime 课后最早回访时间,
-c.comments 课后最早回访记录,
-c.createmax 课后最晚回访时间,
-c.after_c 课后回访次数 ,
-TIMESTAMPDIFF(HOUR, d.createmax ,concat(s.shiting3061 ,' ', right(s.shiting3063,5),':00')) 试听距最后拜访小时数, 
-TIMESTAMPDIFF(HOUR  ,concat(s.shiting3061 ,' ', right(s.shiting3063,5),':00'),c.createdtime) 试听距最早回访小时数
+#d.createdtime 课前拜访时间,
+#d.comments 课前拜访记录,
+ifnull(c.createdtime,'无') 课后回访时间,
+ifnull(c.comments_all,'无')  课后回访记录
 from ec_shitings s 
 left join 
 (
 #课后跟踪
-select a.*,b.createmax, b.after_c from ec_modcomments a,
+select a.*,b.comments_all from ec_modcomments a,
 (
-select crmid  , min(createdtime) createdtime ,max(createdtime) createmax ,count(*) after_c
+select crmid  , createdtime ,GROUP_CONCAT(comments,'/' order by createdtime  ) comments_all
 from ec_modcomments 
 where left(comments,4) like '%课后%'
 group by crmid 
 )b where a.crmid = b.crmid and a.createdtime = b.createdtime 
-
-
 )c 
 on s.shitingsid =c.crmid  
+/*
 left join 
 (
-
-
 #课前跟踪
-select a.*,b.createmax,b.before_c from ec_modcomments a,
+select a.* from ec_modcomments a,
 (
-select crmid  , min(createdtime) createdtime ,max(createdtime) createmax, count(*) before_c
+select crmid  , min(createdtime) createdtime 
 from ec_modcomments 
 where left(comments,4) like '%课前%'
 group by crmid 
 )b where a.crmid = b.crmid and a.createdtime = b.createdtime 
-
-
 )d
 on s.shitingsid =d.crmid  
+*/
 left join ec_clueregs cl 
 on s.clueregsid = cl.clueregsid 
 left join ec_users u 
 on s.smownerid = u.id
-where DATE_FORMAT(s.shiting3061,'%Y%m%d') between DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 4 DAY),'%Y%m%d')and DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 DAY),'%Y%m%d')
+left join ec_users u2 
+on s.smcreatorid = u2.id
+left join ec_acctolists ac 
+on s.acctolistsid = ac.acctolistsid
+left join ec_teachers t 
+on s.teachersid = t.teachersid
+left join 
+(
+select clueregsid,count(*) c
+from ec_shitings
+group by clueregsid
+)s_c  on s.clueregsid = s_c.clueregsid
+where DATE_FORMAT(s.shiting3061,'%Y%m%d') =DATE_FORMAT(DATE_SUB(now(),INTERVAL 0 day),'%Y%m%d')
+#and shiting3071 ='到'
 order by s.shiting3061 , s.shiting3071 , s.clueregsid ,c.createdtime 
-
 '''
 try:
     d1 = pd.read_sql(sql ,conn)
-    file = '%s到%s试听跟进情况.xlsx'%(last_2_days,last_4_days)
+    file = '今天%s试听课前具体信息.xlsx'%(today)
     writer = pd.ExcelWriter(file)
     d1.to_excel(writer ,'Sheet1',index = False)
     writer.save()
-    to_list = ['guojinyuan@171xue.com']
+    to_list = ['ouyangruili@171xue.com']
 #    to_list = ['mashuguo@171xue.com']
-    cc_list = ['mashuguo@171xue.com']
-    sub = '%s到%s试听课的课前课后具体信息，此为自动发送，请知悉。'%(last_2_days,last_4_days)
+    cc_list = ['cici.cai@171xue.com','mashuguo@171xue.com','guojinyuan@171xue.com']
+#    cc_list = ['mashuguo@171xue.com']
+    sub = '今天%s试听课前具体信息，此为自动发送，请知悉。'%(today)
     send_mail.send_mail(to_list ,cc_list  ,sub,file)   
     print ('%s 今天试听发反馈送成功'%(today))
 except Exception as e :
